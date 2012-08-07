@@ -1,6 +1,6 @@
 <?php
 
-class AdapterMongoDb extends AdapterGeneral implements Benchmarkable {
+class AdapterMongoDb extends AdapterGeneral implements Adapter {
   private $mongo;
   private $collection;
 

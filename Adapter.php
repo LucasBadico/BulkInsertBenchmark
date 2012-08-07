@@ -1,6 +1,6 @@
 <?php
 
-interface Benchmarkable {
+interface Adapter {
   public function __construct(array $options);
 
   public function getName();

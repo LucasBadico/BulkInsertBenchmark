@@ -1,6 +1,6 @@
 <?php
 
-class AdapterArangoDb extends AdapterGeneral implements Benchmarkable {
+class AdapterArangoDb extends AdapterGeneral implements Adapter {
   private $urlBase;
 
   public function __construct(array $options) {

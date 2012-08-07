@@ -1,6 +1,6 @@
 <?php
 
-class AdapterCouchDb extends AdapterGeneral implements Benchmarkable {
+class AdapterCouchDb extends AdapterGeneral implements Adapter {
   private $path;
   private $urlBase;
 

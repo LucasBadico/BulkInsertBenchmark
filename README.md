@@ -19,7 +19,7 @@ This is in the nature of things.
 
 The benchmark script also compares the datafile sizes so one can see how much disk space got allocated by the database for the documents inserted.
 
-The benchmark can be started by running the driver.php script in CLI mode.
+The benchmark can be started by running the run.php script in CLI mode.
 The connection parameters and datafile directories can be adjusted easily by editing this script.
 The structure and values of the documents inserted can also be adjusted by editing the $protoTypes array in the same file. 
 
