@@ -1,25 +1,12 @@
 <?php
 
-class DataProviderStatic implements DataProvider {
-  private $name;
-  private $documentCount;
+class DataProviderStatic extends DataProviderGeneral implements DataProvider {
   private $protoType;
 
-  public function __construct($name, $documentCount, array $protoType) {
-    $this->name = $name;
-    $this->documentCount = $documentCount;
+  public function __construct($name, $documentCount, $blockSize, array $protoType) {
     $this->protoType = $protoType;
-  }
 
-  public function getName() {
-    return $this->name;
-  }
-
-  public function getDocumentCount() {
-    return $this->documentCount;
-  }
-
-  public function init() {
+    parent::__construct($name, $documentCount, $blockSize);
   }
 
   public function getNextDocument($offset, $id) {
@@ -29,6 +16,4 @@ class DataProviderStatic implements DataProvider {
     return $document;
   }
 
-  public function shutdown() {
-  }
 }

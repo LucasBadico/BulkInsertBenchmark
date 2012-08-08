@@ -1,25 +1,12 @@
 <?php
 
-class DataProviderRandomColumns implements DataProvider {
-  private $name;
-  private $documentCount;
+class DataProviderRandomColumns extends DataProviderGeneral implements DataProvider {
   private $columnCount;
 
-  public function __construct($name, $documentCount, $columnCount) {
-    $this->name = $name;
-    $this->documentCount = $documentCount;
+  public function __construct($name, $documentCount, $blockSize, $columnCount) {
     $this->columnCount = $columnCount;
-  }
-
-  public function getName() {
-    return $this->name;
-  }
-
-  public function getDocumentCount() {
-    return $this->documentCount;
-  }
-
-  public function init() {
+    
+    parent::__construct($name, $documentCount, $blockSize);
   }
 
   public function getNextDocument($offset, $id) {
@@ -35,6 +22,4 @@ class DataProviderRandomColumns implements DataProvider {
     return $document;
   }
 
-  public function shutdown() {
-  }
 }

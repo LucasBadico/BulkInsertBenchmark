@@ -1,36 +1,36 @@
 <?php
 
 class InsertBenchmark {
-  public function run($blockSize, array $dataProviders, array $adapters, Renderer $renderer) {
+  public function run($blockSize, array $dataProviders, array $dbAdapters, Renderer $renderer) {
     $renderer->init();
 
     foreach ($dataProviders as $dataProvider) {
-      $documentCount = $dataProvider->getDocumentCount();
-
-      foreach ($adapters as $adapter) {
-        $this->runSingleTest($documentCount, $blockSize, $dataProvider, $adapter, $renderer);
+      foreach ($dbAdapters as $dbAdapter) {
+        $this->runSingleTest($dataProvider, $dbAdapter, $renderer);
       }
     }
 
     $renderer->shutdown();
   }
 
-  private function runSingleTest($count, $blockSize, DataProvider $dataProvider, Adapter $adapter, Renderer $renderer) {
+  private function runSingleTest(DataProvider $dataProvider, Adapter $dbAdapter, Renderer $renderer) {
     $dataProvider->init();
+    $documentCount = $dataProvider->getDocumentCount();
+    $blockSize = $dataProvider->getBlockSize();
 
-    $adapter->init();
-    if ($adapter->getDocumentCount() != 0) {
-      throw new Exception("actual document count is not the expected value (" . $adapter->getDocumentCount() . " vs 0)");
+    $dbAdapter->init();
+    if ($dbAdapter->getDocumentCount() != 0) {
+      throw new Exception("actual document count is not the expected value (" . $dbAdapter->getDocumentCount() . " vs 0)");
     }
     $inserted = 0;
     $exit = false;
 
     $start = microtime(true);
 
-    for ($i = 0; $i < $count; $i += $blockSize) {
+    for ($i = 0; $i < $documentCount; $i += $blockSize) {
       $documents = array();
       for ($j = 0; $j < $blockSize; ++$j) {
-        $document = $dataProvider->getNextDocument($i + $j, $adapter->getNextId());
+        $document = $dataProvider->getNextDocument($i + $j, $dbAdapter->getNextId());
         if ($document === NULL) {
           $exit = true;
           break;
@@ -39,38 +39,38 @@ class InsertBenchmark {
       }
 
       $inserted += count($documents);
-      $adapter->addDocuments($documents);
+      $dbAdapter->addDocuments($documents);
 
       if ($exit) {
         break;
       }
     }
 
-    $adapterTime = $adapter->getTime();
+    $adapterTime = $dbAdapter->getTime();
     $totalTime = microtime(true) - $start;
 
-    if ($adapter->getDocumentCount() != $count) {
-      throw new Exception("actual document count is not the expected value (" . $adapter->getDocumentCount() . " vs " . $count .")");
+    if ($dbAdapter->getDocumentCount() != $documentCount) {
+      throw new Exception("actual document count is not the expected value (" . $dbAdapter->getDocumentCount() . " vs " . $documentCount .")");
     }
 
-    $datafileSize = $adapter->getFilesize();
-    $errorCount = $adapter->getErrors();
+    $datafileSize = $dbAdapter->getFilesize();
+    $errorCount = $dbAdapter->getErrors();
 
     $results = array(
-        "adaptername" => $adapter->getName(),
+        "adaptername" => $dbAdapter->getName(),
         "providername" => $dataProvider->getName(),
         "count" => $inserted,
         "blocksize" => $blockSize,
         "totaltime" => $totalTime,
         "adaptertime" => $adapterTime,
-        "doctime" => $adapterTime / $count,
+        "doctime" => $adapterTime / $documentCount,
         "datafilesize" => $datafileSize,
         "errors" => $errorCount,
         );
 
     $renderer->output($results);
 
-    $adapter->shutdown();
+    $dbAdapter->shutdown();
     $dataProvider->shutdown();
   }
 
