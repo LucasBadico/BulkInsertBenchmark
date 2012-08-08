@@ -20,7 +20,7 @@ This is in the nature of things.
 The benchmark script also compares the datafile sizes so one can see how much disk space got allocated by the database for the documents inserted.
 
 The benchmark can be started by running the run.php script in CLI mode.
-The connection parameters and datafile directories can be adjusted easily by editing this script.
-The structure and values of the documents inserted can also be adjusted by editing the $protoTypes array in the same file. 
+The connection parameters and datafile directories for the individual database can be adjusted by renaming the config-example.php script to config.php and editing it.
+The type and number of documents to be inserted can be changed by editing the config file as well.
 
 Needs PHP 5.3 and the native MongoDB driver for PHP. This can be installed by running "sudo pecl install mongo"

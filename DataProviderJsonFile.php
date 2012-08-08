@@ -44,6 +44,8 @@ class DataProviderJsonFile implements DataProvider {
     if ($this->fp) {
       fclose($this->fp);
     }
+
+    $this->buffer = "";
   }
 
   private function getNextRow() {

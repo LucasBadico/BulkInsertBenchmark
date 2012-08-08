@@ -19,7 +19,9 @@ class InsertBenchmark {
     $dataProvider->init();
 
     $adapter->init();
-    assert($adapter->getDocumentCount() == 0);
+    if ($adapter->getDocumentCount() != 0) {
+      throw new Exception("actual document count is not the expected value (" . $adapter->getDocumentCount() . " vs 0)");
+    }
     $inserted = 0;
     $exit = false;
 
@@ -47,7 +49,9 @@ class InsertBenchmark {
     $adapterTime = $adapter->getTime();
     $totalTime = microtime(true) - $start;
 
-    assert($adapter->getDocumentCount() == $count);
+    if ($adapter->getDocumentCount() != $count) {
+      throw new Exception("actual document count is not the expected value (" . $adapter->getDocumentCount() . " vs " . $count .")");
+    }
 
     $datafileSize = $adapter->getFilesize();
     $errorCount = $adapter->getErrors();

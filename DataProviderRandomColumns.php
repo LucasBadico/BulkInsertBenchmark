@@ -23,6 +23,10 @@ class DataProviderRandomColumns implements DataProvider {
   }
 
   public function getNextDocument($offset, $id) {
+    if ($offset >= $this->documentCount) {
+      return NULL;
+    }
+
     $document = array();
     for ($i = 0; $i < $this->columnCount; ++$i) {
       $document["column" . ($i + 1) . "-" . $offset] = "column" . ($i + 1). "-" . $offset;
