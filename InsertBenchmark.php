@@ -1,26 +1,30 @@
 <?php
 
 class InsertBenchmark {
-  public function run($blockSize, array $dataProviders, array $dbAdapters, Renderer $renderer) {
-    $renderer->init();
+  public function run(array $dataProviders, array $dbAdapters, array $renderers) {
+    foreach ($renderers as $renderer) {
+      $renderer->init();
+    }
 
     foreach ($dataProviders as $dataProvider) {
       foreach ($dbAdapters as $dbAdapter) {
-        $this->runSingleTest($dataProvider, $dbAdapter, $renderer);
+        $this->runSingleTest($dataProvider, $dbAdapter, $renderers);
       }
     }
 
-    $renderer->shutdown();
+    foreach ($renderers as $renderer) {
+      $renderer->shutdown();
+    }
   }
 
-  private function runSingleTest(DataProvider $dataProvider, Adapter $dbAdapter, Renderer $renderer) {
+  private function runSingleTest(DataProvider $dataProvider, Adapter $dbAdapter, array $renderers) {
     $dataProvider->init();
     $documentCount = $dataProvider->getDocumentCount();
     $blockSize = $dataProvider->getBlockSize();
 
     $dbAdapter->init();
     if ($dbAdapter->getDocumentCount() != 0) {
-      throw new Exception("actual document count is not the expected value (" . $dbAdapter->getDocumentCount() . " vs 0)");
+      throw new Exception(sprintf("actual document count is not the expected value (%s vs. %s)", (int) $dbAdapter->getDocumentCount(), 0));
     }
     $inserted = 0;
     $exit = false;
@@ -50,7 +54,7 @@ class InsertBenchmark {
     $totalTime = microtime(true) - $start;
 
     if ($dbAdapter->getDocumentCount() != $documentCount) {
-      throw new Exception("actual document count is not the expected value (" . $dbAdapter->getDocumentCount() . " vs " . $documentCount .")");
+      throw new Exception(sprintf("actual document count is not the expected value (%s vs. %s)", (int) $dbAdapter->getDocumentCount(), $documentCount));
     }
 
     $datafileSize = $dbAdapter->getFilesize();
@@ -68,7 +72,9 @@ class InsertBenchmark {
         "errors" => $errorCount,
         );
 
-    $renderer->output($results);
+    foreach ($renderers as $renderer) {
+      $renderer->output($results);
+    }
 
     $dbAdapter->shutdown();
     $dataProvider->shutdown();

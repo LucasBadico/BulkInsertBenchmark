@@ -23,4 +23,4 @@ The benchmark can be started by running the run.php script in CLI mode.
 The connection parameters and datafile directories for the individual database can be adjusted by renaming the config-example.php script to config.php and editing it.
 The type and number of documents to be inserted can be changed by editing the config file as well.
 
-Needs PHP 5.3 and the native MongoDB driver for PHP. This can be installed by running "sudo pecl install mongo"
+Needs PHP 5.3 with curl extension. For MongoDB, you will need the native MongoDB driver for PHP. This can be installed by running "sudo pecl install mongo"

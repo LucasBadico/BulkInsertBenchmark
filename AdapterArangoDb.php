@@ -10,7 +10,7 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   }
 
   public function getName() {
-    return 'arangod';
+    return 'arangodb';
   }
 
   public function init() {
@@ -41,6 +41,10 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   }
   
   public function getFilesize() {
+    if ($this->options["datadir"] == "") {
+      return NULL;
+    }
+
     sleep(3);
     clearstatcache();
 
@@ -56,7 +60,7 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   }
 
   public function getNextId() {
-    return (100000 + $this->id++);
+    return $this->id++;
   }
 
   private function send($method, $url, $data = NULL) {
@@ -78,7 +82,7 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
     $this->totalTime += microtime(true) - $start;
 
     if ($result === false) {
-      printf("ERROR: %s\n", curl_error($curl));
+      throw new Exception(sprintf("Adapter error: %s", curl_error($curl)));
       $this->errors++;
       curl_close($curl);
 

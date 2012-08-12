@@ -1,24 +1,56 @@
 <?php 
 
 class RendererCsv implements Renderer {
+  private $fp;
+  private $separator;
+
+  public function __construct($filename, $separator) {
+    $this->fp = fopen($filename, "w");
+    if (!$this->fp) {
+      throw new Exception("cannot write csv output file ".$filename);
+    }
+
+    $this->separator = $separator;
+  }
+
   public function init() {
-    printf("adapter_name;document_prototype_name;total_document_count;block_size;total_insert_time;net_insert_time;net_insert_time_per_document;datafile_size;errors\n");
+    fprintf($this->fp, 
+            "adapter_name%sdocument_prototype_name%stotal_document_count%sblock_size%stotal_insert_time%snet_insert_time%snet_insert_time_per_document%sdatafile_size%serrors\n",
+            $this->separator,
+            $this->separator,
+            $this->separator,
+            $this->separator,
+            $this->separator,
+            $this->separator,
+            $this->separator,
+            $this->separator
+           );
   }
 
   public function output(array $results) {
-    printf("\"%s\";\"%s\";%d;%d;%s;%s;%s;%d;%d\n", 
-           $results["adaptername"],
-           $results["providername"],
-           $results["count"],
-           $results["blocksize"],
-           self::number($results["totaltime"]),
-           self::number($results["adaptertime"]),
-           self::number($results["doctime"]),
-           $results["datafilesize"],
-           $results["errors"]);
+    fprintf($this->fp,
+            "\"%s\"%s\"%s\"%s\"%d\"%s\"%d\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"%s\"%d\"\n", 
+            $results["adaptername"],
+            $this->separator,
+            $results["providername"],
+            $this->separator,
+            $results["count"],
+            $this->separator,
+            $results["blocksize"],
+            $this->separator,
+            self::number($results["totaltime"]),
+            $this->separator,
+            self::number($results["adaptertime"]),
+            $this->separator,
+            self::number($results["doctime"]),
+            $this->separator,
+            $results["datafilesize"],
+            $this->separator,
+            $results["errors"]);
   }
 
   public function shutdown() {
+    fclose($this->fp);
   }
   
   private static function number($value) {

@@ -17,7 +17,10 @@ abstract class AdapterGeneral {
   public function init() {
     $this->totalTime = 0.0;
     $this->errors = 0;
-    $this->id = 0;
+    $this->id = 1;
+    if (isset($this->options["startid"])) {
+      $this->id = $this->options["startid"];
+    }
   }
 
 }

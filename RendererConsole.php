@@ -12,7 +12,7 @@ class RendererConsole implements Renderer {
     printf("Total insert time (including PHP client overhead)     : %0.6f s\n", $results["totaltime"]);
     printf("Net insert time (request/response only)               : %0.6f s\n", $results["adaptertime"]);
     printf("Net insert time (request/response only) per document  : %0.6f s\n", $results["doctime"]);
-    printf("Datafile size (before/without compaction)             : %d\n", $results["datafilesize"]);
+    printf("Datafile size (before/without compaction)             : %s\n", $results["datafilesize"]);
     printf("Errors                                                : %d\n", $results["errors"]);
     printf("\n\n");
   }

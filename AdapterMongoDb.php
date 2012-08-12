@@ -52,7 +52,7 @@ class AdapterMongoDb extends AdapterGeneral implements Adapter {
   }
 
   public function getNextId() {
-    return (string) (100000 + $this->id++);
+    return (string) ($this->id++);
   }
 
 }

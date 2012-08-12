@@ -37,6 +37,10 @@ class AdapterCouchDb extends AdapterGeneral implements Adapter {
   }
   
   public function getFilesize() {
+    if ($this->options["datafile"] == "") {
+      return NULL;
+    }
+
     sleep(3);
     clearstatcache();
     
@@ -44,7 +48,7 @@ class AdapterCouchDb extends AdapterGeneral implements Adapter {
   }
 
   public function getNextId() {
-    return (string) (100000 + $this->id++);
+    return (string) ($this->id++);
   }
 
   private function send($method, $url, array $data = NULL) {
