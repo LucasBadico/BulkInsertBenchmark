@@ -61,7 +61,7 @@ class InsertBenchmark {
     $errorCount = $dbAdapter->getErrors();
 
     $results = array(
-        "adaptername" => $dbAdapter->getName(),
+        "adaptername" => $dbAdapter->getVersionedName(),
         "providername" => $dataProvider->getName(),
         "count" => $inserted,
         "blocksize" => $blockSize,

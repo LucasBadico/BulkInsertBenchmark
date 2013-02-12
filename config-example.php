@@ -20,7 +20,7 @@ $dataProviders = array(
   // load 10000000 documents with the same prototype. documents will get unique ids, though
   new DataProviderStatic("short_10000000", 10000000, $chunkSize, array("foo" => "bar")),
   // load documents from a JSON file. one json document per line!
-  // new DataProviderJsonFile("enron", 5000, "/tmp/datasets/enron.json"),
+  // new DataProviderJsonFile("enron", 41299, 5000, "/tmp/datasets/enron.json"),
 );
 
 $adapters = array(

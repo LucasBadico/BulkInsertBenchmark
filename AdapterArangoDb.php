@@ -12,7 +12,7 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   public function getName() {
     return 'arangodb';
   }
-
+  
   public function init() {
     $this->send("DELETE", "/_api/collection/" . $this->options["collectionname"]);
     $this->send("POST", "/_api/collection", json_encode(array("name" => $this->options["collectionname"]), true));
@@ -27,17 +27,17 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
       $docs .= json_encode($document, true) . "\n";
     }
 
-    $this->send("POST", "/_api/import?type=documents&useId=yes&collection=" . urlencode($this->options["collectionname"]), $docs);
+    $this->send("POST", "/_api/import?type=documents&collection=" . urlencode($this->options["collectionname"]), $docs);
   }
 
   public function getDocumentCount() {
-    $info = $this->send("GET", "/_api/collection/" . $this->options["collectionname"] . "/figures");
+    $info = $this->send("GET", "/_api/collection/" . urlencode($this->options["collectionname"]) . "/figures");
 
     return $info["count"];
   }
 
   public function shutdown() {
-    $this->send("DELETE", "/_api/collection/" . $this->options["collectionname"]);
+    $this->send("DELETE", "/_api/collection/" . urlencode($this->options["collectionname"]));
   }
   
   public function getFilesize() {
@@ -48,7 +48,7 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
     sleep(3);
     clearstatcache();
 
-    $info = $this->send("GET", "/_api/collection/" . $this->options["collectionname"]);
+    $info = $this->send("GET", "/_api/collection/" . urlencode($this->options["collectionname"]));
     $id = $info["id"];
 
     $result = preg_match("/^(\d+)\s+/", shell_exec("du -bs " . escapeshellarg($this->options["datadir"] . "/collection-" . $id)), $matches);
@@ -61,6 +61,11 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
 
   public function getNextId() {
     return $this->id++;
+  }
+
+  public function getVersion() {
+    $response = $this->send("GET", "/_api/version");
+    return $response['version'];
   }
 
   private function send($method, $url, $data = NULL) {

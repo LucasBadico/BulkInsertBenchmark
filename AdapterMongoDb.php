@@ -17,7 +17,7 @@ class AdapterMongoDb extends AdapterGeneral implements Adapter {
   public function getName() {
     return 'mongodb';
   }
-
+  
   public function init() {
     $this->collection->drop();
     parent::init();
@@ -55,4 +55,13 @@ class AdapterMongoDb extends AdapterGeneral implements Adapter {
     return (string) ($this->id++);
   }
 
+  public function getVersion() {
+    $admin = $this->mongo->admin;
+    $info = $admin->command(array('buildinfo' => true));
+    return $info['version'];
+  }
+
+  public function command($data) {
+    return $this->selectCollection('$cmd')->findOne($data);
+  }
 }

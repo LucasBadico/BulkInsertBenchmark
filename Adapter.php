@@ -4,6 +4,8 @@ interface Adapter {
   public function __construct(array $options);
 
   public function getName();
+  
+  public function getVersionedName();
 
   public function init();
   

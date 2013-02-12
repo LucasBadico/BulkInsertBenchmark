@@ -22,5 +22,9 @@ abstract class AdapterGeneral {
       $this->id = $this->options["startid"];
     }
   }
+  
+  public function getVersionedName() {
+    return $this->getName() . '-' . $this->getVersion();
+  }
 
 }

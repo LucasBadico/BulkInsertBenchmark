@@ -51,6 +51,11 @@ class AdapterCouchDb extends AdapterGeneral implements Adapter {
     return (string) ($this->id++);
   }
 
+  public function getVersion() {
+    $version = $this->send("GET", "/");
+    return $version['version'];
+  }
+
   private function send($method, $url, array $data = NULL) {
     $options = array(
       CURLOPT_RETURNTRANSFER => true,
