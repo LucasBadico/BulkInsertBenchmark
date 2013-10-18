@@ -52,9 +52,7 @@ $adapters = array(
     // ArangoDB host name
     "host" => "127.0.0.1",
     // ArangoDB port
-    "port" => 8529, 
-    // place of the ArangoDB data directory, leave empty if client and server are on different hosts
-    "datadir" => "/performancetest/bin/arangodb/var/lib/data",
+    "port" => 8529 
   )),
 );
 

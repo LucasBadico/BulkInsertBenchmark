@@ -32,7 +32,7 @@ class DataProviderJsonFile extends DataProviderGeneral implements DataProvider {
 
       if ($position === false) {
         $result = fread($this->fp, self::CHUNK_SIZE);
-        if ($result === false) {
+        if ($result === false || $result === "") {
           return NULL;
         }
 

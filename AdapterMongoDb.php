@@ -43,6 +43,11 @@ class AdapterMongoDb extends AdapterGeneral implements Adapter {
 
   public function shutdown() {
     $this->collection->drop();
+    
+    $db = $this->mongo->selectDB($this->options["dbname"]);
+    $db->command(array("dropDatabase" => 1));
+
+    $this->collection = $this->mongo->selectCollection($this->options["dbname"], $this->options["collectionname"]);
   }
   
   public function getFilesize() {

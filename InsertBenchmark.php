@@ -8,6 +8,7 @@ class InsertBenchmark {
 
     foreach ($dataProviders as $dataProvider) {
       foreach ($dbAdapters as $dbAdapter) {
+        sleep(2);
         $this->runSingleTest($dataProvider, $dbAdapter, $renderers);
       }
     }
@@ -52,8 +53,7 @@ class InsertBenchmark {
 
     $adapterTime = $dbAdapter->getTime();
     $totalTime = microtime(true) - $start;
-
-
+    
     if ($dbAdapter->getDocumentCount() != $documentCount) {
       throw new Exception(sprintf("actual document count is not the expected value (%s vs. %s)", (int) $dbAdapter->getDocumentCount(), $documentCount));
     }
