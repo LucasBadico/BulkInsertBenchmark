@@ -27,4 +27,8 @@ abstract class AdapterGeneral {
     return $this->getName() . '-' . $this->getVersion();
   }
 
+  public function getOptions() {
+    return $this->options;
+  }
+
 }

@@ -4,15 +4,24 @@ class AdapterCouchDb extends AdapterGeneral implements Adapter {
   private $path;
   private $urlBase;
 
+  const DEFAULT_PORT = 5984;
+
   public function __construct(array $options) {
+    if (! isset($options["port"])) {
+      $options["port"] = self::DEFAULT_PORT;
+    }
     $this->options = $options;
-    $this->path = "/" . $this->options["dbname"];
+    $this->path = "/" . urlencode($this->options["dbname"]);
 
     $this->urlBase = sprintf("http://%s:%s", $this->options["host"], $this->options["port"]);
   }
 
   public function getName() {
     return 'couchdb';
+  }
+  
+  public function getCollectionName() {
+    return $this->options["dbname"];
   }
 
   public function init() {

@@ -20,7 +20,6 @@ class DataProviderJsonFile extends DataProviderGeneral implements DataProvider {
   public function init() {
     $this->fp = fopen($this->filename, "rb");
     $this->buffer = "";
-    $this->count = 0;
   }
 
   public function getNextDocument($offset, $id) {
@@ -31,7 +30,7 @@ class DataProviderJsonFile extends DataProviderGeneral implements DataProvider {
     while (true) {
       $position = strpos($this->buffer, "\n");
 
-      if ($position === false or $position === 0) {
+      if ($position === false) {
         $result = fread($this->fp, self::CHUNK_SIZE);
         if ($result === false) {
           return NULL;
@@ -39,12 +38,14 @@ class DataProviderJsonFile extends DataProviderGeneral implements DataProvider {
 
         $this->buffer .= $result;
       }
+      else if ($position === 0) {
+        $this->buffer = substr($this->buffer, 1);
+      }
       else {
         $part = substr($this->buffer, 0, $position);
 
         $this->buffer = substr($this->buffer, $position + 1);
-
-        return json_decode(trim($part));
+        return json_decode($part, true);
       }
     }
   }

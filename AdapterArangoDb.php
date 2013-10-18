@@ -3,10 +3,34 @@
 class AdapterArangoDb extends AdapterGeneral implements Adapter {
   private $urlBase;
 
+  const DEFAULT_PORT = 8529;
+
   public function __construct(array $options) {
+    if (! isset($options["port"])) {
+      $options["port"] = self::DEFAULT_PORT;
+    }
     $this->options = $options;
 
     $this->urlBase = sprintf("http://%s:%s", $this->options["host"], $this->options["port"]);
+
+    if (isset($this->options["dbname"])) {
+      // drop existing database
+      $this->send("DELETE", "/_db/_system/_api/database/" . urlencode($this->options["dbname"]));
+      
+      // re-create database 
+      $this->send("POST", "/_db/_system/_api/database", json_encode(array("name" => $this->options["dbname"]), true));
+    }
+    
+    if (isset($this->options["dbname"])) {
+      $this->urlBase .= "/_db/" . urlencode($this->options["dbname"]);
+    }
+  }
+  
+  public function getCollectionName() {
+    if (isset($this->options["dbname"])) {
+      return $this->options["dbname"] . "." . $this->options["collectionname"];
+    }
+    return $this->options["collectionname"];
   }
 
   public function getName() {
@@ -14,9 +38,12 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   }
   
   public function init() {
-    $this->send("DELETE", "/_api/collection/" . $this->options["collectionname"]);
-    $this->send("POST", "/_api/collection", json_encode(array("name" => $this->options["collectionname"]), true));
-    $this->send("PUT", "/_api/collection/" . $this->options["collectionname"] . "/truncate");
+    $options = array("name" => $this->options["collectionname"]);
+    if (isset($this->options["journalsize"])) {
+      $options["journalSize"] = (int) $this->options["journalsize"];
+    }
+    $this->send("DELETE", "/_api/collection/" . urlencode($this->options["collectionname"]));
+    $this->send("POST", "/_api/collection", json_encode($options), true);
 
     parent::init();
   }
@@ -41,22 +68,13 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   }
   
   public function getFilesize() {
-    if ($this->options["datadir"] == "") {
-      return NULL;
-    }
+    $info = $this->send("GET", "/_api/collection/" . urlencode($this->options["collectionname"]) . "/figures");
+    $fig = $info["figures"];
 
-    sleep(3);
-    clearstatcache();
-
-    $info = $this->send("GET", "/_api/collection/" . urlencode($this->options["collectionname"]));
-    $id = $info["id"];
-
-    $result = preg_match("/^(\d+)\s+/", shell_exec("du -bs " . escapeshellarg($this->options["datadir"] . "/collection-" . $id)), $matches);
-    if ($result > 0) {
-      return (int) $matches[1];
-    }
-
-    return NULL;
+    return $fig["datafiles"]["fileSize"] + 
+           $fig["journals"]["fileSize"] + 
+           $fig["compactors"]["fileSize"] + 
+           $fig["shapefiles"]["fileSize"];
   }
 
   public function getNextId() {
@@ -72,9 +90,9 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
     $options = array(
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_CUSTOMREQUEST => $method,
-      CURLOPT_HTTPHEADER => array("Content-Type: application/json", "Connection: Close"),
+      CURLOPT_HTTPHEADER => array("Content-Type: application/json", "Connection: Keep-Alive"),
     );
-    
+   
     if ($data !== NULL) {
       $options[CURLOPT_POSTFIELDS] = $data;
     }

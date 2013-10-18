@@ -6,6 +6,7 @@ class RendererConsole implements Renderer {
 
   public function output(array $results) {
     printf("Adapter name                                          : %s\n", $results["adaptername"]);
+    printf("Collection name                                       : %s\n", $results["collectionname"]);
     printf("Document prototype name                               : %s\n", $results["providername"]);
     printf("Total document count                                  : %d\n", $results["count"]);
     printf("Block/batch size                                      : %d\n", $results["blocksize"]);

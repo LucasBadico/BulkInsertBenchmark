@@ -20,5 +20,9 @@ interface Adapter {
   public function getNextId();
 
   public function getTime();
+  
+  public function getOptions();
+
+  public function getCollectionName();
 }
 

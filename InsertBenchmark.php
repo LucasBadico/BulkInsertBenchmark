@@ -53,24 +53,32 @@ class InsertBenchmark {
     $adapterTime = $dbAdapter->getTime();
     $totalTime = microtime(true) - $start;
 
+
     if ($dbAdapter->getDocumentCount() != $documentCount) {
       throw new Exception(sprintf("actual document count is not the expected value (%s vs. %s)", (int) $dbAdapter->getDocumentCount(), $documentCount));
     }
 
     $datafileSize = $dbAdapter->getFilesize();
     $errorCount = $dbAdapter->getErrors();
+    $options = $dbAdapter->getOptions();
+      
+    $name = $dbAdapter->getVersionedName();
+    if (isset($options["flavor"])) {
+      $name .= "-" . $options["flavor"];
+    }
 
     $results = array(
-        "adaptername" => $dbAdapter->getVersionedName(),
-        "providername" => $dataProvider->getName(),
-        "count" => $inserted,
-        "blocksize" => $blockSize,
-        "totaltime" => $totalTime,
-        "adaptertime" => $adapterTime,
-        "doctime" => $adapterTime / $documentCount,
-        "datafilesize" => $datafileSize,
-        "errors" => $errorCount,
-        );
+      "adaptername" => $name,
+      "providername" => $dataProvider->getName(),
+      "count" => $inserted,
+      "blocksize" => $blockSize,
+      "totaltime" => $totalTime,
+      "adaptertime" => $adapterTime,
+      "doctime" => $adapterTime / $documentCount,
+      "datafilesize" => $datafileSize,
+      "errors" => $errorCount,
+      "collectionname" => $dbAdapter->getCollectionName()
+    );
 
     foreach ($renderers as $renderer) {
       $renderer->output($results);

@@ -4,10 +4,14 @@ class AdapterMongoDb extends AdapterGeneral implements Adapter {
   private $mongo;
   private $collection;
 
-  public function __construct(array $options) {
-    $this->options = $options;
+  const DEFAULT_PORT = 27017;
 
-    $this->mongo = new Mongo("mongodb://" . $options["host"] . ":" .$options["port"]);
+  public function __construct(array $options) {
+    if (! isset($options["port"])) {
+      $options["port"] = self::DEFAULT_PORT;
+    }
+    $this->options = $options;
+    $this->mongo = new Mongo("mongodb://" . $this->options["host"] . ":" .$this->options["port"]);
     $db = $this->mongo->selectDB($this->options["dbname"]);
     $db->command(array("dropDatabase" => 1));
 
@@ -16,6 +20,10 @@ class AdapterMongoDb extends AdapterGeneral implements Adapter {
 
   public function getName() {
     return 'mongodb';
+  }
+  
+  public function getCollectionName() {
+    return $this->options["dbname"] . "." . $this->options["collectionname"];
   }
   
   public function init() {
