@@ -68,6 +68,9 @@ class AdapterArangoDb extends AdapterGeneral implements Adapter {
   }
   
   public function getFilesize() {
+    // sync write-ahead log first
+    $info = $this->send("PUT", "/_admin/wal/flush?waitForSync=true&waitForCollector=true");
+
     $info = $this->send("GET", "/_api/collection/" . urlencode($this->options["collectionname"]) . "/figures");
     $fig = $info["figures"];
 
